@@ -1,0 +1,26 @@
+# Ignore Python cache and environment files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+.env.*
+
+# Ignore frontend environment files
+frontend/.env
+frontend/.env.*
+
+# Ignore backend environment files
+backend/.env
+backend/.env.*
+
+# Ignore node_modules
+frontend/node_modules/
+
+# Ignore build output
+frontend/build/
+
+# Ignore Docker artifacts
+*.log
+*.pid

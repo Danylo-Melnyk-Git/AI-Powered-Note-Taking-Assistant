@@ -1,0 +1,11 @@
+flask
+flask-jwt-extended
+python-dotenv
+openai
+google-cloud-speech
+transformers
+scikit-learn
+boto3
+pytest
+flask-cors
+rake-nltk

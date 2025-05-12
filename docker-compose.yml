@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    container_name: ai-note-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env.example
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - frontend
+  frontend:
+    build: ./frontend
+    container_name: ai-note-frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env.example
+    volumes:
+      - ./frontend:/app

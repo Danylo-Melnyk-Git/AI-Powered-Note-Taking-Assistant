@@ -1,0 +1,20 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - run: pip install -r backend/requirements.txt && pip install -r backend/requirements-dev.txt
+      - run: cd backend && black . --check && isort . --check && flake8
+      - run: cd backend && pytest --maxfail=1 --disable-warnings --cov=.
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - run: cd frontend && npm ci
+      - run: cd frontend && npm run lint && npm test -- --coverage
