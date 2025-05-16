@@ -9,3 +9,5 @@ boto3
 pytest
 flask-cors
 rake-nltk
+flask-limiter
+aioredis

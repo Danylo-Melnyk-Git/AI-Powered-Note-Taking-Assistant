@@ -1,41 +1,30 @@
-import React, { useState } from 'react';
-import { getKeywords } from '../services/api';
+import React, { useEffect, useState } from 'react';
+import { getNoteById, extractApiError } from '../services/api';
 
-export default function KeywordList({ token, transcript }) {
+export default function KeywordList({ noteId }) {
   const [keywords, setKeywords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleExtract = () => {
+  useEffect(() => {
+    if (!noteId) return;
     setLoading(true);
     setError('');
-    fetch('/keywords', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ transcript }),
-    })
-      .then(res => res.json())
+    getNoteById(noteId)
       .then(data => {
+        setKeywords(data.keywords || []);
         setLoading(false);
-        if (data.keywords) setKeywords(data.keywords);
-        else setError(data.error || 'Unknown error');
       })
-      .catch(() => {
+      .catch(err => {
+        setError(extractApiError(err));
         setLoading(false);
-        setError('Network/server error');
       });
-  };
+  }, [noteId]);
 
   return (
     <div>
-      <button onClick={handleExtract} disabled={loading || !transcript} className="px-3 py-1 bg-blue-500 text-white rounded">
-        {loading ? 'Extracting...' : 'Extract Keywords'}
-      </button>
       {loading && <div className="spinner">Loading...</div>}
-      {error && <div className="error">{error}</div>}
+      {error && <div className="error text-red-600">{error}</div>}
       {keywords.length > 0 && (
         <ul className="mt-4 list-disc list-inside">
           {keywords.map((kw, i) => (
@@ -43,6 +32,7 @@ export default function KeywordList({ token, transcript }) {
           ))}
         </ul>
       )}
+      {!loading && !error && keywords.length === 0 && <div>No keywords extracted.</div>}
     </div>
   );
 }

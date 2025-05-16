@@ -1,0 +1,12 @@
+{
+  "welcome": "Welcome to AI Note Assistant!",
+  "login": "Login",
+  "register": "Register",
+  "upload": "Upload Audio Note",
+  "transcribe": "Transcribe",
+  "summary": "Summary",
+  "keywords": "Keywords",
+  "topics": "Topics",
+  "settings": "Settings",
+  "logout": "Logout"
+}

@@ -1,0 +1,24 @@
+<!-- src/pages/Upload.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload — AI Note Assistant</title>
+    <link rel="stylesheet" href="../index.css" />
+  </head>
+  <body>
+    <main class="min-h-screen flex flex-col items-center justify-center bg-primary/5">
+      <section class="bg-white rounded shadow p-8 w-full max-w-lg">
+        <h2 class="text-xl font-bold mb-6">Upload Audio</h2>
+        <form class="flex flex-col gap-4">
+          <div class="border-2 border-dashed border-primary rounded p-8 text-center hover:bg-primary/10 transition cursor-pointer">
+            <input type="file" class="hidden" />
+            <span class="block text-gray-500">Drag & drop or click to select audio file</span>
+          </div>
+          <button class="bg-primary text-white py-2 rounded font-semibold hover:bg-primary/80 transition">Upload</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

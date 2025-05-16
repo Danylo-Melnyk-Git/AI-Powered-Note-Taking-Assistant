@@ -1,0 +1,4 @@
+apiVersion: v2
+name: notes-helper
+description: A Helm chart for AI Note Assistant
+version: 0.1.0

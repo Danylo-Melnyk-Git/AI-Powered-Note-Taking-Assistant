@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { loginUser, extractApiError } from '../services/api';
+import { registerUser, extractApiError } from '../services/api';
 import { TextField, Button, Box, Typography, Paper } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
-export default function LoginForm({ onLogin }) {
+export default function RegisterPage({ onRegister }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -13,10 +13,10 @@ export default function LoginForm({ onLogin }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await loginUser(username, password);
+      await registerUser(username, password);
       setLoading(false);
-      enqueueSnackbar('Login successful', { variant: 'success' });
-      onLogin();
+      enqueueSnackbar('Registration successful! You are now logged in.', { variant: 'success' });
+      if (onRegister) onRegister();
     } catch (err) {
       setLoading(false);
       enqueueSnackbar(extractApiError(err), { variant: 'error' });
@@ -26,7 +26,7 @@ export default function LoginForm({ onLogin }) {
   return (
     <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" bgcolor="background.default">
       <Paper elevation={3} sx={{ p: 4, minWidth: 320 }}>
-        <Typography variant="h5" fontWeight={700} mb={2} align="center">Login</Typography>
+        <Typography variant="h5" fontWeight={700} mb={2} align="center">Register</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
             label="Username"
@@ -54,7 +54,7 @@ export default function LoginForm({ onLogin }) {
             sx={{ mt: 2 }}
             disabled={loading || !username || !password}
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Registering...' : 'Register'}
           </Button>
         </form>
       </Paper>

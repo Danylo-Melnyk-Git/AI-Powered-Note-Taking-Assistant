@@ -1,0 +1,20 @@
+replicaCount: 2
+image:
+  repository: ai-note-backend
+  tag: latest
+  pullPolicy: IfNotPresent
+env:
+  JWT_SECRET: "your-jwt-secret"
+  OPENAI_API_KEY: "your-openai-key"
+  # Add other secrets as needed
+service:
+  type: ClusterIP
+  port: 8000
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: notes.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific

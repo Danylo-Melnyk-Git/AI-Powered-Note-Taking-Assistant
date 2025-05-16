@@ -1,0 +1,17 @@
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import "./styles/theme.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-primary, #f9fafb);
+  color: #111827;
+}
+
+[data-theme="dark"] body {
+  background: #18181b;
+  color: #f3f4f6;
+}

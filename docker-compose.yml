@@ -20,3 +20,53 @@ services:
       - ./frontend/.env.example
     volumes:
       - ./frontend:/app
+  sentry:
+    image: getsentry/sentry:23.7.0
+    ports:
+      - "9000:9000"
+    environment:
+      SENTRY_SECRET_KEY: "dev-secret-key"
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry
+      SENTRY_DB_NAME: sentry
+    depends_on:
+      - sentry-postgres
+      - sentry-redis
+
+  sentry-postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: sentry
+      POSTGRES_PASSWORD: sentry
+      POSTGRES_DB: sentry
+    volumes:
+      - sentry-postgres-data:/var/lib/postgresql/data
+
+  sentry-redis:
+    image: redis:6
+    volumes:
+      - sentry-redis-data:/data
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  sentry-postgres-data:
+  sentry-redis-data:
+  grafana-data:

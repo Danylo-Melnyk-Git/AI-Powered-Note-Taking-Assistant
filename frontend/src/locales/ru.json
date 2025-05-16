@@ -1,0 +1,12 @@
+{
+  "welcome": "Добро пожаловать в AI Note Assistant!",
+  "login": "Войти",
+  "register": "Регистрация",
+  "upload": "Загрузить аудиозаметку",
+  "transcribe": "Транскрибировать",
+  "summary": "Сводка",
+  "keywords": "Ключевые слова",
+  "topics": "Темы",
+  "settings": "Настройки",
+  "logout": "Выйти"
+}

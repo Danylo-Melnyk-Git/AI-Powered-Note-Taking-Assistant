@@ -1,41 +1,30 @@
-import React, { useState } from 'react';
-import { getTopics } from '../services/api';
+import React, { useEffect, useState } from 'react';
+import { getNoteById, extractApiError } from '../services/api';
 
-export default function TopicTags({ token, transcript }) {
+export default function TopicTags({ noteId }) {
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleClassify = () => {
+  useEffect(() => {
+    if (!noteId) return;
     setLoading(true);
     setError('');
-    fetch('/topics', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ transcript }),
-    })
-      .then(res => res.json())
+    getNoteById(noteId)
       .then(data => {
+        setTopics(data.topics || []);
         setLoading(false);
-        if (data.topics) setTopics(data.topics);
-        else setError(data.error || 'Unknown error');
       })
-      .catch(() => {
+      .catch(err => {
+        setError(extractApiError(err));
         setLoading(false);
-        setError('Network/server error');
       });
-  };
+  }, [noteId]);
 
   return (
     <div>
-      <button onClick={handleClassify} disabled={loading || !transcript} className="px-3 py-1 bg-blue-500 text-white rounded">
-        {loading ? 'Classifying...' : 'Classify Topics'}
-      </button>
       {loading && <div className="spinner">Loading...</div>}
-      {error && <div className="error">{error}</div>}
+      {error && <div className="error text-red-600">{error}</div>}
       {topics.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
           {topics.map((tag, i) => (
@@ -43,6 +32,7 @@ export default function TopicTags({ token, transcript }) {
           ))}
         </div>
       )}
+      {!loading && !error && topics.length === 0 && <div>No topics identified.</div>}
     </div>
   );
 }

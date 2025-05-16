@@ -2,99 +2,78 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
-/**
- * Authenticates a user and retrieves a JWT token.
- * @param {string} username - The user's username.
- * @param {string} password - The user's password.
- * @returns {Promise<string>} The JWT access token.
- */
-export async function login(username, password) {
+// --- Auth ---
+export async function loginUser(username, password) {
   const res = await axios.post(`${API_URL}/login`, { username, password });
-  const token = res.data.access_token;
+  const token = res.data.token;
   localStorage.setItem('jwt_token', token);
   return token;
 }
 
-/**
- * Returns the authorization headers with JWT token if available.
- * @returns {Object} Authorization headers or empty object.
- */
+export async function registerUser(username, password) {
+  const res = await axios.post(`${API_URL}/register`, { username, password });
+  const token = res.data.token;
+  if (token) localStorage.setItem('jwt_token', token);
+  return token;
+}
+
 function authHeaders() {
   const token = localStorage.getItem('jwt_token');
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-/**
- * Uploads an audio file for transcription.
- * @param {File} file - The audio file to upload.
- * @returns {Promise<string>} The transcription job ID.
- */
-export async function uploadAudio(file) {
+// --- Notes ---
+export async function uploadNote({ audioFile, noteText }) {
   const formData = new FormData();
-  formData.append('file', file);
-  const res = await axios.post(`${API_URL}/transcribe`, formData, {
+  if (audioFile) formData.append('audio_file', audioFile);
+  if (noteText) formData.append('note_text', noteText);
+  const res = await axios.post(`${API_URL}/notes`, formData, {
     headers: { ...authHeaders(), 'Content-Type': 'multipart/form-data' },
   });
-  return res.data.id;
+  return res.data; // { id, keywords, summary, topics, transcription, created_at }
 }
 
-/**
- * Retrieves the transcript for a given job ID.
- * @param {string} id - The transcription job ID.
- * @returns {Promise<string>} The transcript text.
- */
-export async function getTranscript(id) {
-  const res = await axios.get(`${API_URL}/transcript/${id}`, { headers: authHeaders() });
-  return res.data.transcript;
+export async function getAllNotes() {
+  const res = await axios.get(`${API_URL}/notes`, { headers: authHeaders() });
+  return res.data; // Array of { id, summary, created_at }
 }
 
-/**
- * Gets a summary for a given transcript.
- * @param {string} transcript - The transcript text.
- * @returns {Promise<string>} The summary text.
- */
-export async function getSummary(transcript) {
-  const res = await axios.post(`${API_URL}/summarize`, { transcript }, { headers: authHeaders() });
-  return res.data.summary;
+export async function getNoteById(id) {
+  const res = await axios.get(`${API_URL}/notes/${id}`, { headers: authHeaders() });
+  return res.data; // { id, keywords, summary, topics, transcription, created_at }
 }
 
-/**
- * Extracts keywords from a transcript.
- * @param {string} transcript - The transcript text.
- * @returns {Promise<string[]>} Array of keywords.
- */
-export async function getKeywords(transcript) {
-  const res = await axios.post(`${API_URL}/keywords`, { transcript }, { headers: authHeaders() });
-  return res.data.keywords;
+export function logoutUser() {
+  localStorage.removeItem('jwt_token');
 }
 
-/**
- * Extracts topics from a transcript.
- * @param {string} transcript - The transcript text.
- * @returns {Promise<string[]>} Array of topics.
- */
-export async function getTopics(transcript) {
-  const res = await axios.post(`${API_URL}/topics`, { transcript }, { headers: authHeaders() });
-  return res.data.topics;
+export function getMediaUrl(filename) {
+  if (!filename) return null;
+  return `${API_URL}/media/${filename}`;
 }
 
-/**
- * Saves a transcript to the cloud.
- * @param {string} id - The transcript/job ID.
- * @param {string} transcript - The transcript text.
- * @returns {Promise<Object>} The response data from the server.
- */
-export async function saveTranscriptToCloud(id, transcript) {
-  const res = await axios.post(`${API_URL}/save`, { id, transcript }, { headers: authHeaders() });
+export async function deleteNote(noteId) {
+  // Implement backend endpoint for deletion if needed
+  // Placeholder: return Promise.resolve()
+  return Promise.resolve();
+}
+
+// --- Settings ---
+export async function getUserSettings() {
+  const res = await axios.get(`${API_URL}/settings`, { headers: authHeaders() });
   return res.data;
 }
 
-/**
- * Loads a transcript from the cloud by ID.
- * @param {string} id - The transcript/job ID.
- * @returns {Promise<string>} The transcript text.
- */
-export async function loadTranscriptFromCloud(id) {
-  const res = await axios.get(`${API_URL}/load/${id}`, { headers: authHeaders() });
-  return res.data.transcript;
+export async function updateUserSettings(settings) {
+  const res = await axios.put(`${API_URL}/settings`, settings, { headers: authHeaders() });
+  return res.data;
+}
+
+// --- Utility for error extraction ---
+export function extractApiError(error) {
+  if (error.response && error.response.data && error.response.data.error) {
+    return error.response.data.error;
+  }
+  if (error.message) return error.message;
+  return 'Unknown error';
 }

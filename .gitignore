@@ -24,3 +24,4 @@ frontend/build/
 # Ignore Docker artifacts
 *.log
 *.pid
+node_modules

@@ -1,99 +1,61 @@
 import React, { useState } from 'react';
-import { uploadAudio, getTranscript, saveTranscriptToCloud, loadTranscriptFromCloud } from '../services/api';
+import { uploadNote, getNoteById, extractApiError } from '../services/api';
+import { Button, Typography, Paper, Box, Input, CircularProgress } from '@mui/material';
+import { useSnackbar } from 'notistack';
+import SkeletonLoader from './Common/SkeletonLoader';
 
-export default function TranscriptionComponent({ token, onTranscribed }) {
+export default function TranscriptionComponent({ onNoteCreated }) {
   const [file, setFile] = useState(null);
-  const [transcriptionId, setTranscriptionId] = useState('');
+  const [noteId, setNoteId] = useState('');
   const [transcript, setTranscript] = useState('');
   const [loading, setLoading] = useState(false);
-  const [polling, setPolling] = useState(false);
-  const [cloudStatus, setCloudStatus] = useState('');
-  const [error, setError] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-    setError('');
   };
 
   const handleUpload = async () => {
     if (!file) return;
     setLoading(true);
     setTranscript('');
-    setTranscriptionId('');
-    setError('');
+    setNoteId('');
     try {
-      const id = await uploadAudio(file);
-      setTranscriptionId(id);
-      setPolling(true);
-      pollTranscript(id);
+      const note = await uploadNote({ audioFile: file });
+      setNoteId(note.id);
+      if (onNoteCreated) onNoteCreated(note.id);
+      // Fetch transcription
+      const details = await getNoteById(note.id);
+      setTranscript(details.transcription || '');
+      setLoading(false);
+      enqueueSnackbar('Transcription complete', { variant: 'success' });
     } catch (err) {
       setLoading(false);
-      setError('Upload failed.');
-    }
-  };
-
-  const pollTranscript = async (id, attempts = 0) => {
-    if (attempts > 20) {
-      setPolling(false);
-      setTranscript('Transcription timed out.');
-      return;
-    }
-    try {
-      const text = await getTranscript(id);
-      if (text && text !== 'dummy transcript') {
-        setTranscript(text);
-        setPolling(false);
-      } else {
-        setTimeout(() => pollTranscript(id, attempts + 1), 2000);
-      }
-    } catch {
-      setTimeout(() => pollTranscript(id, attempts + 1), 2000);
+      enqueueSnackbar(extractApiError(err), { variant: 'error' });
     }
   };
 
   return (
-    <div>
-      <input type="file" accept="audio/*" onChange={handleFileChange} disabled={loading} />
-      <button onClick={handleUpload} disabled={loading || !file} className="ml-2 px-3 py-1 bg-blue-500 text-white rounded">
-        {loading ? 'Uploading...' : 'Upload & Transcribe'}
-      </button>
-      {loading && <div className="spinner">Loading...</div>}
-      {error && <div className="error">{error}</div>}
-      {polling && <div className="mt-2 text-gray-500">Transcribing...</div>}
+    <Paper elevation={2} sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
+      <Typography variant="h6" mb={2}>Upload Audio for Transcription</Typography>
+      <Box display="flex" alignItems="center" gap={2} mb={2}>
+        <Input type="file" inputProps={{ accept: 'audio/*' }} onChange={handleFileChange} disabled={loading} />
+        <Button onClick={handleUpload} disabled={loading || !file} variant="contained" color="primary">
+          {loading ? <CircularProgress size={24} /> : 'Upload & Transcribe'}
+        </Button>
+      </Box>
+      {loading && <SkeletonLoader lines={3} />}
       {transcript && (
-        <div className="mt-4">
-          <h3 className="font-semibold">Transcript:</h3>
-          <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap">{transcript}</pre>
-          <div className="flex gap-2 mt-2">
-            <button
-              className="px-3 py-1 bg-green-600 text-white rounded"
-              onClick={async () => {
-                setCloudStatus('Saving...');
-                try {
-                  await saveTranscriptToCloud(transcriptionId, transcript);
-                  setCloudStatus('Saved to cloud!');
-                } catch {
-                  setCloudStatus('Save failed.');
-                }
-              }}
-            >Save to Cloud</button>
-            <button
-              className="px-3 py-1 bg-purple-600 text-white rounded"
-              onClick={async () => {
-                setCloudStatus('Loading...');
-                try {
-                  const loaded = await loadTranscriptFromCloud(transcriptionId);
-                  setTranscript(loaded);
-                  setCloudStatus('Loaded from cloud!');
-                } catch {
-                  setCloudStatus('Load failed.');
-                }
-              }}
-            >Load from Cloud</button>
-            {cloudStatus && <span className="ml-2 text-sm">{cloudStatus}</span>}
-          </div>
-        </div>
+        <Box mt={3}>
+          <Typography variant="subtitle1" fontWeight={600}>Transcription:</Typography>
+          <Paper variant="outlined" sx={{ p: 2, mt: 1, bgcolor: 'background.default' }}>
+            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{transcript}</Typography>
+          </Paper>
+        </Box>
       )}
-    </div>
+      {!loading && !transcript && (
+        <Typography variant="body2" color="text.secondary" mt={2}>No transcription available.</Typography>
+      )}
+    </Paper>
   );
 }
