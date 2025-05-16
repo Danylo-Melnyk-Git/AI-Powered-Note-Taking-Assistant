@@ -11,3 +11,5 @@ flask-cors
 rake-nltk
 flask-limiter
 aioredis
+sentry-sdk
+PyJWT

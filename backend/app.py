@@ -18,7 +18,6 @@ from flask_jwt_extended import (
 )
 from dotenv import load_dotenv
 import uuid
-from secure import SecureHeaders
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
@@ -44,16 +43,8 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET") or "dev-secret"
-app.config['SECRET_KEY'] = 'your-secret-key'
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY") or os.getenv("JWT_SECRET") or "dev-secret"
 app.config['DATABASE'] = 'db.sqlite3'
-
-# Secure headers
-secure_headers = SecureHeaders()
-
-@app.after_request
-def set_secure_headers(response):
-    secure_headers.flask(response)
-    return response
 
 # CORS with allowed origins from ENV
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
@@ -79,13 +70,20 @@ def request_id_filter(record):
     record.request_id = getattr(g, 'request_id', '-')
     return True
 
+class RequestIdFilter(logging.Filter):
+    def filter(self, record):
+        if not hasattr(record, 'request_id'):
+            record.request_id = '-'
+        return True
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s %(name)s [%(request_id)s] %(message)s',
 )
 logger = logging.getLogger(__name__)
-for handler in logger.handlers:
-    handler.addFilter(request_id_filter)
+for handler in logging.getLogger().handlers:
+    handler.addFilter(RequestIdFilter())
+
 
 # --- JWT Middleware ---
 def token_required(f):

@@ -1,9 +1,8 @@
 /* src/index.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 @import "./styles/theme.css";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* @tailwind directives removed because they are not recognized by standard CSS processors.
+   If you are using Tailwind CSS, ensure your build tool is configured to process these directives. */
 
 body {
   font-family: var(--font-sans);
