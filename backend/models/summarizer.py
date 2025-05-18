@@ -3,7 +3,7 @@ Text summarization module.
 """
 
 import openai
-from utils.config import OPENAI_API_KEY
+from backend.utils.config import OPENAI_API_KEY
 
 
 def summarize(text):

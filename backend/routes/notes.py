@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, send_from_directory, g, current_app
-from utils.file_handler import save_file, allowed_file, MEDIA_DIR
+from backend.utils.file_handler import save_file, allowed_file, MEDIA_DIR
 import os
 import sqlite3
 from datetime import datetime
@@ -48,10 +48,12 @@ def upload_note():
                 (user_id, datetime.utcnow().isoformat(), audio_filename, note_text))
     note_id = cur.lastrowid
     db.commit()
-    # TODO: Call processing pipeline and store results
-    # Example usage (pseudo):
-    # summary = await process_note(user_id, note_text, summarize_text)
-    return jsonify({'id': note_id, 'audio_file': audio_filename}), 201
+    # Call processing pipeline and store results
+    summary = None
+    if note_text:
+        # Пример: обработка текста заметки (можно заменить на нужную функцию)
+        summary = asyncio.run(process_note(user_id, note_text, lambda x: x))
+    return jsonify({'id': note_id, 'audio_file': audio_filename, 'summary': summary}), 201
 
 @bp.route('/media/<filename>', methods=['GET'])
 def serve_media(filename):

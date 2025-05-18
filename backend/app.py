@@ -29,14 +29,14 @@ sentry_sdk.init(
     environment=os.getenv("ENV")
 )
 
-from models.keyword_extractor import extract_keywords as extract_keywords_fn
-from models.summarizer import summarize as summarize_text
-from models.transcriber import transcribe
-from models.topic_classifier import classify_topics as classify_topics_fn
-from routes.auth import bp as auth_bp
-from routes.notes import bp as notes_bp
-from routes.user import bp as user_bp
-from utils.storage import download_file, upload_file
+from backend.models.keyword_extractor import extract_keywords as extract_keywords_fn
+from backend.models.summarizer import summarize as summarize_text
+from backend.models.transcriber import transcribe
+from backend.models.topic_classifier import classify_topics as classify_topics_fn
+from backend.routes.auth import bp as auth_bp
+from backend.routes.notes import bp as notes_bp
+from backend.routes.user import bp as user_bp
+from backend.utils.storage import download_file, upload_file
 
 # Load environment variables from .env
 load_dotenv()
@@ -99,7 +99,8 @@ def token_required(f):
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             g.user_id = data['user_id']
-        except Exception:
+        except Exception as e:
+            logger.exception("Token decode error")
             return jsonify({'error': 'Token is invalid!'}), 401
         return f(*args, **kwargs)
     return decorated

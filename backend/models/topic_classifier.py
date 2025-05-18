@@ -3,7 +3,7 @@ Topic classification module.
 """
 
 import openai
-from utils.config import OPENAI_API_KEY
+from backend.utils.config import OPENAI_API_KEY
 
 CANDIDATES = ["business", "technology", "health", "education", "entertainment"]
 

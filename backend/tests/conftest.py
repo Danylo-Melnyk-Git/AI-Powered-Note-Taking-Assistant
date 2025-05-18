@@ -9,7 +9,7 @@ def test_app():
     os.environ["DATABASE_URL"] = f"sqlite:///{db_path}"
 
     # Import your Flask app here
-    from app import app as flask_app  # Adjust import if needed
+    from backend.app import app as flask_app  # Adjust import if needed
     flask_app.config['TESTING'] = True
 
     with flask_app.test_client() as client:

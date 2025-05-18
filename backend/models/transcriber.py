@@ -3,7 +3,7 @@ Speech-to-text transcription module.
 """
 
 import openai
-from utils.config import OPENAI_API_KEY
+from backend.utils.config import OPENAI_API_KEY
 
 
 def transcribe(file_path):

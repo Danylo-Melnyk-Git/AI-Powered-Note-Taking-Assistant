@@ -6,6 +6,8 @@ image:
 env:
   JWT_SECRET: "your-jwt-secret"
   OPENAI_API_KEY: "your-openai-key"
+  SENTRY_DSN: "your-sentry-dsn"
+  ALLOWED_ORIGINS: "http://localhost:3000"
   # Add other secrets as needed
 service:
   type: ClusterIP
