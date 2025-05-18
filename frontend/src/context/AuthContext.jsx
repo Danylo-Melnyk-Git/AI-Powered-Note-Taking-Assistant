@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+// Auth ctx for login/logout state
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -7,6 +8,7 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(!!token);
 
   useEffect(() => {
+    console.log('[AuthContext] token changed:', token);
     setIsAuthenticated(!!token);
   }, [token]);
 

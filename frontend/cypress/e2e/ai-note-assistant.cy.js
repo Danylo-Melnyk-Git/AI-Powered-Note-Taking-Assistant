@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+// Cypress E2E test for AI Note Assistant
+// Covers login, upload, summary, keywords, topics, save, reload
 describe('AI Note Assistant E2E', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000');

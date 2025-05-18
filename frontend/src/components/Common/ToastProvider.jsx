@@ -1,6 +1,7 @@
 import React from 'react';
 import { SnackbarProvider } from 'notistack';
 
+// Toast/snackbar provider for notifications
 export default function ToastProvider({ children }) {
   return (
     <SnackbarProvider

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Skeleton, Box } from '@mui/material';
 
+// Skeleton loader for loading state
 export default function SkeletonLoader({ lines = 3, width = '100%', height = 32 }) {
   return (
     <Box>

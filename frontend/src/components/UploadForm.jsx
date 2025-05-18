@@ -3,15 +3,18 @@ import { uploadNote, extractApiError } from '../services/api';
 import { Button, Box, Typography, Paper, Input, CircularProgress } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
+// Upload form for audio files
 export default function UploadForm({ onUploaded }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
+  // Handle file input change
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
+  // Handle file upload
   const handleUpload = async () => {
     if (!file) return;
     setLoading(true);

@@ -3,6 +3,7 @@ import { Box, Typography, Paper, TextField, Button, FormControlLabel, Switch, Me
 import { useUser } from '../context/UserContext';
 import { useSnackbar } from 'notistack';
 
+// Settings page for user prefs
 export default function SettingsPage() {
   const { settings, saveSettings, loading } = useUser();
   const [form, setForm] = useState({ theme_preference: 'light', notification_level: 'all', email: '', name: '' });

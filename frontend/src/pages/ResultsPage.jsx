@@ -6,6 +6,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import SkeletonLoader from '../components/Common/SkeletonLoader';
 import ConfirmModal from '../components/Common/ConfirmModal';
 
+// Results page for note details
 export default function ResultsPage({ noteId }) {
   const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(true);

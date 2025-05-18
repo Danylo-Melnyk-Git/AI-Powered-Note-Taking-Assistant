@@ -10,6 +10,9 @@ import { I18nextProvider, initReactI18next } from 'react-i18next';
 import en from './locales/en.json';
 import ru from './locales/ru.json';
 
+// Main entry point
+// Sets up providers and renders App
+
 Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,
   integrations: [new BrowserTracing()],

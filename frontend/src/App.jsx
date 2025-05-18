@@ -10,6 +10,7 @@ import KeywordList from './components/KeywordList';
 import TopicTags from './components/TopicTags';
 import ToastProvider from './components/Common/ToastProvider';
 
+// Main app router and protected routes
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" />;
@@ -17,6 +18,7 @@ function ProtectedRoute({ children }) {
 
 export default function App() {
   const [noteId, setNoteId] = useState('');
+  const [transcript, setTranscript] = useState('');
 
   return (
     <Router>
@@ -30,11 +32,10 @@ export default function App() {
               <ProtectedRoute>
                 <AppLayout>
                   <Routes>
-                    <Route path="/" element={<TranscriptionComponent onNoteCreated={setNoteId} />} />
-                    <Route path="/summary" element={<SummaryComponent noteId={noteId} />} />
-                    <Route path="/keywords" element={<KeywordList noteId={noteId} />} />
-                    <Route path="/topics" element={<TopicTags noteId={noteId} />} />
-                    {/* Add more protected routes here */}
+                    <Route path="/" element={<TranscriptionComponent onNoteCreated={(id, tr) => { setNoteId(id); setTranscript(tr); }} />} />
+                    <Route path="/summary" element={<SummaryComponent noteId={noteId} transcript={transcript} />} />
+                    <Route path="/keywords" element={<KeywordList noteId={noteId} transcript={transcript} />} />
+                    <Route path="/topics" element={<TopicTags noteId={noteId} transcript={transcript} />} />
                   </Routes>
                 </AppLayout>
               </ProtectedRoute>

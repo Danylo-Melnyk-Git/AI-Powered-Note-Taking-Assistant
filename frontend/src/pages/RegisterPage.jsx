@@ -3,12 +3,14 @@ import { registerUser, extractApiError } from '../services/api';
 import { TextField, Button, Box, Typography, Paper } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
+// Register page wrapper
 export default function RegisterPage({ onRegister }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
+  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

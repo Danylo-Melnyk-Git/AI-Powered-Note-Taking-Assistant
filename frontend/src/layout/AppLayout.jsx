@@ -9,6 +9,7 @@ import { blue, grey, common } from '@mui/material/colors';
 
 const drawerWidth = 220;
 
+// App layout with sidebar, theme, logout
 export default function AppLayout({ children, onLogout }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {

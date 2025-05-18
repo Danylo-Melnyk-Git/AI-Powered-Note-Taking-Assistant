@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getUserSettings, updateUserSettings } from '../services/api';
 import { useAuth } from './AuthContext';
 
+// Get/set user settings ctx
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
@@ -10,6 +11,7 @@ export function UserProvider({ children }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log('[UserContext] isAuthenticated changed:', isAuthenticated);
     if (isAuthenticated) {
       setLoading(true);
       getUserSettings().then(data => {

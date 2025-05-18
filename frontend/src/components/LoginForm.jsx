@@ -3,12 +3,14 @@ import { loginUser, extractApiError } from '../services/api';
 import { TextField, Button, Box, Typography, Paper } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
+// Login form component
 export default function LoginForm({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

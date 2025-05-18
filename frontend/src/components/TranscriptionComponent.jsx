@@ -11,6 +11,7 @@ export default function TranscriptionComponent({ onNoteCreated }) {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
+  // Upload audio and get transcript
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -23,12 +24,12 @@ export default function TranscriptionComponent({ onNoteCreated }) {
     try {
       const note = await uploadNote({ audioFile: file });
       setNoteId(note.id);
-      if (onNoteCreated) onNoteCreated(note.id);
-      // Fetch transcription
+      // Получаем transcript
       const details = await getNoteById(note.id);
-      setTranscript(details.transcription || '');
+      setTranscript(details.transcript || '');
       setLoading(false);
       enqueueSnackbar('Transcription complete', { variant: 'success' });
+      if (onNoteCreated) onNoteCreated(note.id, details.transcript || '');
     } catch (err) {
       setLoading(false);
       enqueueSnackbar(extractApiError(err), { variant: 'error' });

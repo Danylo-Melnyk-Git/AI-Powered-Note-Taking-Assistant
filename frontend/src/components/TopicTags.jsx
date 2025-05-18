@@ -1,21 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { getNoteById, extractApiError } from '../services/api';
 
+// Get topics for note
+// noteId: string
+// Returns: list of topics
+// Usage: <TopicTags noteId={id} />
 export default function TopicTags({ noteId }) {
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [transcript, setTranscript] = useState('');
 
   useEffect(() => {
     if (!noteId) return;
     setLoading(true);
     setError('');
+    console.log('[TopicTags] Start fetching transcript for noteId:', noteId);
+    // Сначала получаем transcript
     getNoteById(noteId)
       .then(data => {
+        const transcriptText = data.transcript || '';
+        setTranscript(transcriptText);
+        console.log('[TopicTags] Got transcript:', transcriptText);
+        // Затем делаем POST на /topics
+        console.log('[TopicTags] POST /topics', { transcript: transcriptText });
+        return fetch('/topics', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(localStorage.getItem('jwt_token') ? { 'Authorization': `Bearer ${localStorage.getItem('jwt_token')}` } : {})
+          },
+          body: JSON.stringify({ transcript: transcriptText })
+        });
+      })
+      .then(res => {
+        console.log('[TopicTags] /topics response status:', res.status);
+        return res.json();
+      })
+      .then(data => {
+        console.log('[TopicTags] /topics response data:', data);
         setTopics(data.topics || []);
         setLoading(false);
       })
       .catch(err => {
+        console.error('[TopicTags] error:', err);
         setError(extractApiError(err));
         setLoading(false);
       });

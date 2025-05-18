@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 
+// Modal for confirm actions (e.g. delete)
 export default function ConfirmModal({ open, title, message, onConfirm, onCancel }) {
   return (
     <Dialog open={open} onClose={onCancel}>
